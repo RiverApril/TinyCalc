@@ -24,6 +24,7 @@ class StatusmenuController: NSObject {
             popover.performClose(sender)
         }else{
             if let button = statusItem.button {
+                NSRunningApplication.current().activate(options: NSApplicationActivationOptions.activateIgnoringOtherApps)
                 popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
             }
         }
