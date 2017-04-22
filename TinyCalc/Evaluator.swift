@@ -118,7 +118,7 @@ class Evaluator {
                             throw "Unknown function"
                         }
                     }else{
-                        throw "Function does not contain a number"
+                        throw "Function lacking a number"
                     }
                 }else if expression.symbols.count == 2{
                     if let symA = expression.symbols[0] as? SymbolNumber, let symB = expression.symbols[0] as? SymbolNumber{
@@ -130,7 +130,7 @@ class Evaluator {
                             throw "Unknown function"
                         }
                     }else{
-                        throw "Function does not contain a number"
+                        throw "Function lacking a number"
                     }
                 }
                 
@@ -179,10 +179,10 @@ class Evaluator {
                 }
                 
             }else{
-                throw "this isn't a function"
+                throw "This isn't a function"
             }
         }else{
-            throw "function too short"
+            throw "Function too short"
         }
         
     }
@@ -192,35 +192,39 @@ class Evaluator {
         if i > 0 && i < expression.symbols.count-1{
             if let left = expression.symbols[i-1] as? SymbolNumber, let right = expression.symbols[i+1] as? SymbolNumber{
                 var result = 0.0
-                switch op.op{
-                case "+":
-                    result = Double(left.number)! + Double(right.number)!
-                    break
-                case "-":
-                    result = Double(left.number)! - Double(right.number)!
-                    break
-                case "*":
-                    result = Double(left.number)! * Double(right.number)!
-                    break
-                case "/":
-                    result = Double(left.number)! / Double(right.number)!
-                    break
-                case "^":
-                    result = pow(Double(left.number)!, Double(right.number)!)
-                    break
-                default:
-                    throw "Unknown operator"
+                if let l = Double(left.number), let r = Double(right.number){
+                    switch op.op{
+                    case "+":
+                        result = l + r
+                        break
+                    case "-":
+                        result = l - r
+                        break
+                    case "*":
+                        result = l * r
+                        break
+                    case "/":
+                        result = l / r
+                        break
+                    case "^":
+                        result = pow(l, r)
+                        break
+                    default:
+                        throw "Unknown operator"
+                    }
+                    let num = SymbolNumber(number: String(result))
+                    expression.symbols.remove(at: i-1) // remove the left
+                    i -= 1 // move to stay on operator
+                    expression.symbols.remove(at: i) // remove operator, now on right
+                    expression.symbols[i] = num // change right to result
+                }else{
+                    throw "Number Invalid"
                 }
-                let num = SymbolNumber(number: String(result))
-                expression.symbols.remove(at: i-1) // remove the left
-                i -= 1 // move to stay on operator
-                expression.symbols.remove(at: i) // remove operator, now on right
-                expression.symbols[i] = num // change right to result
             }else{
-                throw "Operator does not have numbers next to it"
+                throw "Operator lacking numbers"
             }
         }else{
-            throw "Operator at edge of expression"
+            throw "Operator at edge"
         }
         return i
     }
@@ -306,7 +310,7 @@ class Evaluator {
                 continue
             case ".":
                 if buildingNumber.contains(".") {
-                    throw "Number contains too many decimal places"
+                    throw "Too many '.'"
                 } else {
                     buildingNumber.append(".")
                 }
@@ -364,19 +368,19 @@ class Evaluator {
                 continue
             case ")":
                 if !justAddedValue{
-                    throw "Unexpected closing paranthesis"
+                    throw "Unexpected ')'"
                 }
                 if let parent = exp.parent {
                     exp = parent
                 }else{
-                    throw "Too many closing parantheses"
+                    throw "Too many ')'s"
                 }
                 justAddedValue = true
                 justClosedExpression = true
                 continue
             case "+", "-", "*", "/", "^":
                 if !justAddedValue{
-                    throw "Unexpected operator"
+                    throw "Unexpected operator: " + String(c)
                 }else{
                     exp.addOperator(op: String(c))
                     justAddedValue = false
@@ -388,7 +392,7 @@ class Evaluator {
                 justAddedValue = false
                 continue
             default:
-                throw "Unknown Symbol"
+                throw "Unknown Symbol: " + String(c)
             }
             
         }
