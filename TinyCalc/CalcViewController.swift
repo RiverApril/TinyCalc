@@ -32,6 +32,9 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
     }
     
     @IBAction func textChanged(_ sender: NSTextField) {
+        if(inputField.stringValue == "quit"){
+            NSApplication.shared().terminate(self)
+        }
         do{
             try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
         }catch let e as String{

@@ -19,10 +19,6 @@ class StatusmenuController: NSObject {
     
     let popover = NSPopover()
     
-    @IBAction func quitClicked(_ sender: NSMenuItem) {
-        NSApplication.shared().terminate(self)
-    }
-    
     func togglePopover(sender: AnyObject){
         if(popover.isShown){
             popover.performClose(sender)
