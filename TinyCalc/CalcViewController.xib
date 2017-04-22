@@ -8,6 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CalcViewController" customModule="TinyCalc" customModuleProvider="target">
             <connections>
+                <outlet property="CopyOnReturn" destination="mGQ-lm-SMv" id="Ibq-AV-TBe"/>
                 <outlet property="answerField" destination="RLE-N9-5jz" id="vwe-Wx-Oml"/>
                 <outlet property="inputField" destination="uV7-k3-xFR" id="NhC-z7-fbk"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
@@ -39,9 +40,29 @@
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <outlet property="menu" destination="Pby-uL-OrH" id="YH0-OZ-5eW"/>
+                    </connections>
                 </textField>
             </subviews>
             <point key="canvasLocation" x="-126" y="44.5"/>
         </customView>
+        <menu id="Pby-uL-OrH">
+            <items>
+                <menuItem title="Copy" id="Y5Q-ZX-Tq7">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="copyAnswer:" target="-2" id="CFm-ll-Ipy"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Copy on Return" id="mGQ-lm-SMv">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="copyOnReturnToggle:" target="-2" id="BWj-gQ-DWn"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="-246.5" y="160.5"/>
+        </menu>
     </objects>
 </document>
