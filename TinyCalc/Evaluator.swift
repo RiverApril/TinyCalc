@@ -317,7 +317,7 @@ class Evaluator {
                 continue
             default:
                 if c == "-" {
-                    if exp.symbols.count >= 2 {
+                    if buildingNumber.isEmpty && exp.symbols.count >= 2 {
                         if let op = exp.symbols[exp.symbols.count-1] as? SymbolOperator{
                             if op.op == "^" || op.op == "/" || op.op == "*"{
                                 buildingNumber.append("-")

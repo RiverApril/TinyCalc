@@ -10,7 +10,6 @@ import Cocoa
 
 class StatusmenuController: NSObject {
     
-    
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     
     let popover = NSPopover()
