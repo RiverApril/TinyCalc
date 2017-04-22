@@ -313,6 +313,14 @@ class Evaluator {
                 continue
             default:
                 if c == "-" {
+                    if exp.symbols.count >= 2 {
+                        if let op = exp.symbols[exp.symbols.count-1] as? SymbolOperator{
+                            if op.op == "^" || op.op == "/" || op.op == "*"{
+                                buildingNumber.append("-")
+                                continue
+                            }
+                        }
+                    }
                     if buildingNumber.isEmpty && justClosedExpression == false && justAddedValue == false {
                         exp.addNumber(number: "-1")
                         exp.addOperator(op: "*")
@@ -320,7 +328,7 @@ class Evaluator {
                     }
                 }
                 if !buildingNumber.isEmpty{
-                    if buildingNumber.characters.count == 1 && (buildingNumber == ".") {
+                    if buildingNumber.characters.count == 1 && (buildingNumber == "." || buildingNumber == "-") {
                         throw "Number incomplete"
                     }
                     if justClosedExpression {
@@ -385,7 +393,7 @@ class Evaluator {
             
         }
         if !buildingNumber.isEmpty{
-            if buildingNumber.characters.count == 1 && (buildingNumber == ".") {
+            if buildingNumber.characters.count == 1 && (buildingNumber == "." || buildingNumber == "-") {
                 throw "Number incomplete"
             }
             if justClosedExpression {
