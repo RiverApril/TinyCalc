@@ -11,10 +11,6 @@ import Cocoa
 class StatusmenuController: NSObject {
     
     
-    
-    @IBOutlet weak var statusMenu: NSMenu!
-    
-    
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     
     let popover = NSPopover()
@@ -34,8 +30,6 @@ class StatusmenuController: NSObject {
         
         let icon = NSImage(named: "statusIcon")
         icon?.isTemplate = true
-        //statusItem.image = icon
-        //statusItem.menu = statusMenu
         
         if let button = statusItem.button {
             button.appearsDisabled = false
