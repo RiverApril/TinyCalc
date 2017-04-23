@@ -114,6 +114,8 @@ class Evaluator {
                             result = log10(a)
                         }else if fun.name == "sqrt"{
                             result = sqrt(a)
+                        }else if fun.name == "exp"{
+                            result = exp(a)
                         }else{
                             throw "Unknown function"
                         }
@@ -121,11 +123,15 @@ class Evaluator {
                         throw "Function lacking a number"
                     }
                 }else if expression.symbols.count == 2{
-                    if let symA = expression.symbols[0] as? SymbolNumber, let symB = expression.symbols[0] as? SymbolNumber{
+                    if let symA = expression.symbols[0] as? SymbolNumber, let symB = expression.symbols[1] as? SymbolNumber{
                         let a = Double(symA.number)!
                         let b = Double(symB.number)!
                         if fun.name == "atan"{
                             result = atan2(a, b)
+                        }else if fun.name == "root"{
+                            result = pow(b, 1.0/a)
+                        }else if fun.name == "log"{
+                            result = log(b)/log(a)
                         }else{
                             throw "Unknown function"
                         }
@@ -293,7 +299,13 @@ class Evaluator {
     
     static func parseExpression(input: String) throws -> Expression {
         
-        let filteredInput = input.replacingOccurrences(of: " ", with: "")
+        let regexRmSpaces:NSRegularExpression = try NSRegularExpression(pattern: "((?<=[^\\d.]) (?=[\\d.])|(?<=[\\d.]) (?=[^\\d.])|(?<=[^\\d.]) (?=[^\\d.]))", options: [])
+        let regexFixPi:NSRegularExpression = try NSRegularExpression(pattern: "(?<=[^a-z]|^)pi(?=[^a-z]|$)", options: [])
+        let regexFixE:NSRegularExpression = try NSRegularExpression(pattern: "(?<=[^a-z]|^)e(?=[^a-z]|$)", options: [])
+        
+        var filteredInput = regexRmSpaces.stringByReplacingMatches(in: input, options: [], range: NSRange(location: 0, length: input.characters.count), withTemplate: "")
+        filteredInput = regexFixPi.stringByReplacingMatches(in: filteredInput, options: [], range: NSRange(location: 0, length: input.characters.count), withTemplate: "pi()")
+        filteredInput = regexFixE.stringByReplacingMatches(in: filteredInput, options: [], range: NSRange(location: 0, length: input.characters.count), withTemplate: "e()")
         
         var exp = Expression()
         
@@ -367,7 +379,7 @@ class Evaluator {
                 }
                 continue
             case ")":
-                if !justAddedValue{
+                if exp.symbols.count > 0 && exp.symbols[exp.symbols.count-1] is SymbolOperator{
                     throw "Unexpected ')'"
                 }
                 if let parent = exp.parent {
