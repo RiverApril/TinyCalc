@@ -15,6 +15,8 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
     
     @IBOutlet weak var CopyOnReturn: NSMenuItem!
     
+    var popover: NSPopover? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,6 +35,22 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
     
     }
     
+    override func controlTextDidChange(_ obj: Notification) {
+        do{
+            try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
+            answerField.textColor = NSColor.controlTextColor
+        }catch{
+            answerField.textColor = NSColor.disabledControlTextColor
+            // ignore until they press enter
+        }
+    }
+    
+    override func cancelOperation(_ sender: Any?) {
+        if (popover?.isShown)! {
+            popover?.performClose(sender)
+        }
+    }
+    
     @IBAction func copyOnReturnToggle(_ sender: NSMenuItem) {
         
         if CopyOnReturn.state == NSOnState {
@@ -48,16 +66,6 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
         let pasteboard = NSPasteboard.general();
         pasteboard.declareTypes([NSPasteboardTypeString], owner: nil)
         pasteboard.setString(answerField.stringValue, forType: NSPasteboardTypeString)
-    }
-    
-    override func controlTextDidChange(_ obj: Notification) {
-        do{
-            try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
-            answerField.textColor = NSColor.controlTextColor
-        }catch{
-            answerField.textColor = NSColor.disabledControlTextColor
-            // ignore until they press enter
-        }
     }
     
     @IBAction func textChanged(_ sender: NSTextField) {

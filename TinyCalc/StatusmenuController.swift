@@ -14,17 +14,6 @@ class StatusmenuController: NSObject {
     
     let popover = NSPopover()
     
-    func togglePopover(sender: AnyObject){
-        if(popover.isShown){
-            popover.performClose(sender)
-        }else{
-            if let button = statusItem.button {
-                NSRunningApplication.current().activate(options: NSApplicationActivationOptions.activateIgnoringOtherApps)
-                popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
-            }
-        }
-    }
-    
     override func awakeFromNib() {
         
         let icon = NSImage(named: "statusIcon")
@@ -37,8 +26,22 @@ class StatusmenuController: NSObject {
             button.target = self
         }
         
-        popover.contentViewController = CalcViewController(nibName: "CalcViewController", bundle: nil)
+        let controller = CalcViewController(nibName: "CalcViewController", bundle: nil)
+        
+        controller?.popover = popover
+        
+        popover.contentViewController = controller
         
     }
-
+    
+    func togglePopover(sender: AnyObject){
+        if(popover.isShown){
+            popover.performClose(sender)
+        }else{
+            if let button = statusItem.button {
+                NSRunningApplication.current().activate(options: NSApplicationActivationOptions.activateIgnoringOtherApps)
+                popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+            }
+        }
+    }
 }
