@@ -65,134 +65,6 @@ class SymbolFunction : Symbol{
 
 class Evaluator {
     
-    static func evaluateFunction(expression: Expression) throws -> SymbolNumber{
-        if expression.symbols.count >= 1{
-            if let fun = expression.symbols[0] as? SymbolFunction{
-                
-                expression.symbols.remove(at: 0)
-                
-                var result: Double? = nil
-                
-                if expression.symbols.count == 0{
-                    if fun.name == "pi"{
-                        result = Double.pi
-                    }else if fun.name == "e"{
-                        result = exp(1)
-                    }
-                }else if expression.symbols.count == 1{
-                    if let symA = expression.symbols[0] as? SymbolNumber{
-                        let a = Double(symA.number)!
-                        if fun.name == "abs"{
-                            result = a > 0 ? a : -a
-                        }else if fun.name == "cos"{
-                            result = cos(a)
-                        }else if fun.name == "sin"{
-                            result = sin(a)
-                        }else if fun.name == "tan"{
-                            result = tan(a)
-                        }else if fun.name == "cosh"{
-                            result = cosh(a)
-                        }else if fun.name == "sinh"{
-                            result = sinh(a)
-                        }else if fun.name == "tanh"{
-                            result = tanh(a)
-                        }else if fun.name == "acos"{
-                            result = acos(a)
-                        }else if fun.name == "asin"{
-                            result = asin(a)
-                        }else if fun.name == "atan"{
-                            result = atan(a)
-                        }else if fun.name == "acosh"{
-                            result = acosh(a)
-                        }else if fun.name == "asinh"{
-                            result = asinh(a)
-                        }else if fun.name == "atanh"{
-                            result = atanh(a)
-                        }else if fun.name == "ln"{
-                            result = log(a)
-                        }else if fun.name == "log"{
-                            result = log10(a)
-                        }else if fun.name == "sqrt"{
-                            result = sqrt(a)
-                        }else if fun.name == "exp"{
-                            result = exp(a)
-                        }else{
-                            throw "Unknown function"
-                        }
-                    }else{
-                        throw "Function lacking a number"
-                    }
-                }else if expression.symbols.count == 2{
-                    if let symA = expression.symbols[0] as? SymbolNumber, let symB = expression.symbols[1] as? SymbolNumber{
-                        let a = Double(symA.number)!
-                        let b = Double(symB.number)!
-                        if fun.name == "atan"{
-                            result = atan2(a, b)
-                        }else if fun.name == "root"{
-                            result = pow(b, 1.0/a)
-                        }else if fun.name == "log"{
-                            result = log(b)/log(a)
-                        }else{
-                            throw "Unknown function"
-                        }
-                    }else{
-                        throw "Function lacking a number"
-                    }
-                }
-                
-                if result == nil && expression.symbols.count >= 2{
-                    var params = [Double]()
-                    for sym in expression.symbols{
-                        params.append(Double((sym as! SymbolNumber).number)!)
-                    }
-                    if fun.name == "min"{
-                        result = params[0]
-                        for param in params{
-                            result = param < result! ? param : result!
-                        }
-                    }
-                    if fun.name == "max"{
-                        result = params[0]
-                        for param in params{
-                            result = param > result! ? param : result!
-                        }
-                    }
-                    if fun.name == "minabs"{
-                        result = params[0]
-                        for param in params{
-                            result = abs(param) < abs(result!) ? param : result!
-                        }
-                    }
-                    if fun.name == "maxabs"{
-                        result = params[0]
-                        for param in params{
-                            result = abs(param) > abs(result!) ? param : result!
-                        }
-                    }
-                    if fun.name == "mean"{
-                        result = 0
-                        for param in params{
-                            result! += param
-                        }
-                        result! /= Double(params.count)
-                    }
-                }
-                
-                if let res = result {
-                    return SymbolNumber(number: String(res))
-                }else{
-                    throw "Unknown Function"
-                }
-                
-            }else{
-                throw "This isn't a function"
-            }
-        }else{
-            throw "Function too short"
-        }
-        
-    }
-    
     static func evaluateOperatorHere(op: SymbolOperator, expression: Expression, initalI: Int) throws -> Int{
         var i = initalI
         if i > 0 && i < expression.symbols.count-1{
@@ -237,6 +109,10 @@ class Evaluator {
     
     static func evaluateExpression(expression: Expression) throws -> SymbolNumber{
         
+        if expression.symbols.count == 0{
+            throw ""
+        }
+        
         // Evaluate (...)
         var i = 0
         while i < expression.symbols.count {
@@ -279,15 +155,8 @@ class Evaluator {
             i += 1
         }
         
-        if expression.symbols.count == 0{
+        if expression.symbols.count != 1{
             throw "evaluation error"
-        }
-        if expression.symbols.count >= 1{
-            if expression.symbols[0] is SymbolFunction{
-                return try evaluateFunction(expression: expression)
-            }else if expression.symbols.count >= 2{
-                throw "evaluation error"
-            }
         }
         if !(expression.symbols[0] is SymbolNumber){
             throw "evaluation error"
@@ -299,22 +168,13 @@ class Evaluator {
     
     static func parseExpression(input: String) throws -> Expression {
         
-        let regexRmSpaces:NSRegularExpression = try NSRegularExpression(pattern: "((?<=[^\\d.]) (?=[\\d.])|(?<=[\\d.]) (?=[^\\d.])|(?<=[^\\d.]) (?=[^\\d.]))", options: [])
-        let regexFixPi:NSRegularExpression = try NSRegularExpression(pattern: "(?<=[^a-z]|^)pi(?=[^a-z]|$)", options: [])
-        let regexFixE:NSRegularExpression = try NSRegularExpression(pattern: "(?<=[^a-z]|^)e(?=[^a-z]|$)", options: [])
-        
-        var filteredInput = regexRmSpaces.stringByReplacingMatches(in: input, options: [], range: NSRange(location: 0, length: input.characters.count), withTemplate: "")
-        filteredInput = regexFixPi.stringByReplacingMatches(in: filteredInput, options: [], range: NSRange(location: 0, length: input.characters.count), withTemplate: "pi()")
-        filteredInput = regexFixE.stringByReplacingMatches(in: filteredInput, options: [], range: NSRange(location: 0, length: input.characters.count), withTemplate: "e()")
-        
         var exp = Expression()
         
         var buildingNumber: String = ""
-        var buildingFunctionName: String = ""
         var justAddedValue = false
         var justClosedExpression = false
         
-        for c in filteredInput.characters {
+        for c in input.characters {
             
             switch c{
             case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
@@ -358,11 +218,6 @@ class Evaluator {
                 break
             }
             
-            if(c >= "a" && c <= "z"){
-                buildingFunctionName.append(c)
-                continue
-            }
-            
             switch c{
             case "(":
                 if justAddedValue || justClosedExpression{
@@ -373,10 +228,6 @@ class Evaluator {
                 let newExp = Expression()
                 exp.addExpression(exp: newExp)
                 exp = newExp
-                if !buildingFunctionName.isEmpty{
-                    exp.addFunction(name: buildingFunctionName)
-                    buildingFunctionName = ""
-                }
                 continue
             case ")":
                 if exp.symbols.count > 0 && exp.symbols[exp.symbols.count-1] is SymbolOperator{
@@ -385,7 +236,10 @@ class Evaluator {
                 if let parent = exp.parent {
                     exp = parent
                 }else{
-                    throw "Too many ')'s"
+                    //throw "Too many ')'s"
+                    let newExp = Expression()
+                    newExp.addExpression(exp: exp);
+                    exp = newExp;
                 }
                 justAddedValue = true
                 justClosedExpression = true

@@ -35,13 +35,16 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
     
     }
     
+    @IBAction func quitOption(_ sender: NSMenuItem) {
+        NSApplication.shared().terminate(self)
+    }
+    
     override func controlTextDidChange(_ obj: Notification) {
         do{
             try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
-            answerField.textColor = NSColor.controlTextColor
+            //answerField.textColor = NSColor.controlTextColor
         }catch{
-            answerField.textColor = NSColor.disabledControlTextColor
-            // ignore until they press enter
+            answerField.stringValue = "..."
         }
     }
     
