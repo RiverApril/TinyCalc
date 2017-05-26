@@ -83,9 +83,18 @@ class Evaluator {
                         break
                     case "/":
                         result = l / r
+                        if(r == 0){
+                            throw "Division by zero"
+                        }
                         break
                     case "^":
                         result = pow(l, r)
+                        break
+                    case "%":
+                        result = l.truncatingRemainder(dividingBy:r)
+                        if(r == 0){
+                            throw "Division by zero"
+                        }
                         break
                     default:
                         throw "Unknown operator"
@@ -133,11 +142,11 @@ class Evaluator {
             i += 1
         }
         
-        // Evaluate * and /
+        // Evaluate * and / and %
         i = 0
         while i < expression.symbols.count {
             if let op = expression.symbols[i] as? SymbolOperator {
-                if op.op == "*" || op.op == "/"{
+                if op.op == "*" || op.op == "/" || op.op == "%"{
                     try i = evaluateOperatorHere(op: op, expression: expression, initalI: i)
                 }
             }
@@ -168,13 +177,16 @@ class Evaluator {
     
     static func parseExpression(input: String) throws -> Expression {
         
+        var filteredInput = (input as NSString).replacingOccurrences(of: "pi", with:"(\(M_PI))");
+        filteredInput = (filteredInput as NSString).replacingOccurrences(of: "e", with:"(\(M_E))");
+        
         var exp = Expression()
         
         var buildingNumber: String = ""
         var justAddedValue = false
         var justClosedExpression = false
         
-        for c in input.characters {
+        for c in filteredInput.characters {
             
             switch c{
             case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
@@ -244,7 +256,7 @@ class Evaluator {
                 justAddedValue = true
                 justClosedExpression = true
                 continue
-            case "+", "-", "*", "/", "^":
+            case "+", "-", "*", "/", "^", "%":
                 if !justAddedValue{
                     throw "Unexpected operator: " + String(c)
                 }else{
