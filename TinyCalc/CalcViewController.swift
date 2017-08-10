@@ -75,15 +75,15 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
         if inputField.stringValue == "quit" {
             NSApplication.shared().terminate(self)
         }
-        if UserDefaults.standard.bool(forKey: "copyOnEnter") {
-            copyAnswer(nil)
-        }
         do{
             try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
         }catch let e as String{
             answerField.stringValue = e
         }catch{
             answerField.stringValue = "Unknown Error"
+        }
+        if UserDefaults.standard.bool(forKey: "copyOnEnter") {
+            copyAnswer(nil)
         }
     }
 }

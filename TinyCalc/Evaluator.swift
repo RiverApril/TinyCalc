@@ -179,6 +179,7 @@ class Evaluator {
         
         var filteredInput = (input as NSString).replacingOccurrences(of: "pi", with:"(\(M_PI))");
         filteredInput = (filteredInput as NSString).replacingOccurrences(of: "e", with:"(\(M_E))");
+        filteredInput = (filteredInput as NSString).replacingOccurrences(of: " ", with:"");
         
         var exp = Expression()
         
@@ -295,7 +296,11 @@ class Evaluator {
     }
     
     static func evaluate(input: String) throws -> String{
-        return try evaluateExpression(expression: parseExpression(input: input)).number
+        let s = try evaluateExpression(expression: parseExpression(input: input)).number;
+        if(s.hasSuffix(".0")){
+            return String(s.characters.dropLast(2));
+        }
+        return s;
     }
 
 }
