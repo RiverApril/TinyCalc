@@ -28,6 +28,7 @@
 		E128F46A1EAB1820001B2924 /* CalcViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CalcViewController.xib; sourceTree = "<group>"; };
 		E128F46D1EAB2714001B2924 /* Evaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Evaluator.swift; sourceTree = "<group>"; };
 		E128F4711EAC0F49001B2924 /* NSApplicationFix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSApplicationFix.swift; sourceTree = "<group>"; };
+		E161E7BC1F707AD700C41554 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +47,7 @@
 			children = (
 				E128F4591EAB0AB2001B2924 /* TinyCalc */,
 				E128F4581EAB0AB2001B2924 /* Products */,
+				E161E7BB1F707AD700C41554 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,6 +73,14 @@
 				E128F4711EAC0F49001B2924 /* NSApplicationFix.swift */,
 			);
 			path = TinyCalc;
+			sourceTree = "<group>";
+		};
+		E161E7BB1F707AD700C41554 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E161E7BC1F707AD700C41554 /* Carbon.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
