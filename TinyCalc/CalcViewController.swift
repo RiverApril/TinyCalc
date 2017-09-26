@@ -17,6 +17,10 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
     
     var popover: NSPopover? = nil
     
+    override func viewDidAppear() {
+        inputField.selectText(nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
