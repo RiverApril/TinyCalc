@@ -30,11 +30,15 @@ class StatusmenuController: NSObject {
     override func awakeFromNib() {
         
         // Setup Global Hotkey:
-        let opts = NSDictionary(object: kCFBooleanTrue, forKey: kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString) as CFDictionary
-        
-        guard AXIsProcessTrustedWithOptions(opts) == true else { return }
-        
-        NSEvent.addGlobalMonitorForEvents(matching: .keyDown, handler: self.globalHotkeyHandler)
+        if(AXIsProcessTrusted()){
+            
+            let opts = NSDictionary(object: kCFBooleanTrue, forKey: kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString) as CFDictionary
+            
+            guard AXIsProcessTrustedWithOptions(opts) == true else { return }
+            
+            NSEvent.addGlobalMonitorForEvents(matching: .keyDown, handler: self.globalHotkeyHandler)
+            
+        }
         //
         
         
