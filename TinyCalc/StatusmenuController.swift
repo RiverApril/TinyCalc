@@ -21,15 +21,21 @@ class StatusmenuController: NSObject {
     let globalKeymask: NSEventModifierFlags = NSEventModifierFlags(rawValue: NSEventModifierFlags.command.rawValue)
     
     func globalHotkeyHandler(event: NSEvent!) {
+        _ = localHotkeyHandler(event: event)
+    }
+    
+    func localHotkeyHandler(event: NSEvent!) -> NSEvent? {
         if event.keyCode == self.globalKeycode && event.modifierFlags.rawValue & self.globalKeymask.rawValue == self.globalKeymask.rawValue {
             togglePopover(sender: self)
+            return nil
         }
+        return event
     }
     
     
     override func awakeFromNib() {
         
-        // Setup Global Hotkey:
+        // Setup Global/Local Hotkey:
         if(AXIsProcessTrusted()){
             
             let opts = NSDictionary(object: kCFBooleanTrue, forKey: kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString) as CFDictionary
@@ -37,6 +43,7 @@ class StatusmenuController: NSObject {
             guard AXIsProcessTrustedWithOptions(opts) == true else { return }
             
             NSEvent.addGlobalMonitorForEvents(matching: .keyDown, handler: self.globalHotkeyHandler)
+            NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: self.localHotkeyHandler)
             
         }
         //
