@@ -299,6 +299,10 @@ class Evaluator {
             status.exp = status.exp.parent!
         }
         
+        if status.exp.symbols.isEmpty {
+            throw ""
+        }
+        
         return status.exp
     }
     
