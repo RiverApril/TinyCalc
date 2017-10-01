@@ -316,10 +316,10 @@ class Evaluator {
             let char = status.char()
             switch(char) {
                 case "-":
-                    if number.contains("-") {
-                        throw "Unexpected \"-\""
-                    } else {
+                    if number.isEmpty {
                         number.append(char)
+                    } else {
+                        building = false
                     }
                 case ".":
                     if number.contains(".") {
