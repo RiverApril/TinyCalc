@@ -87,7 +87,7 @@ class Evaluator {
                             throw "Division by zero"
                         }
                     default:
-                        throw "Unknown operator"
+                        throw "Unknown operator: \(op.op)"
                     }
                     let num = SymbolNumber(String(result))
                     expression.symbols.remove(at: i-1) // remove the left
@@ -95,13 +95,41 @@ class Evaluator {
                     expression.symbols.remove(at: i) // remove operator, now on right
                     expression.symbols[i] = num // change right to result
                 }else{
-                    throw "Number Invalid"
+                    throw "Number Invalid: \(left.number)"
                 }
             }else{
-                throw "Operator lacking numbers"
+                throw "Operator \"\(op.op)\" lacking numbers"
             }
         }else{
-            throw "Operator at edge"
+            throw "Operator \"\(op.op)\" at edge"
+        }
+        return i
+    }
+    
+    static func evaluateRightOperatorHere(op: SymbolOperator, expression: Expression, initalI: Int) throws -> Int{
+        var i = initalI
+        if i > 0 && i < expression.symbols.count {
+            if let left = expression.symbols[i-1] as? SymbolNumber {
+                var result = 0.0
+                if let l = Double(left.number) {
+                    switch op.op{
+                    case "!":
+                        result = tgamma(l+1);
+                    default:
+                        throw "Unknown operator: \(op.op)"
+                    }
+                    let num = SymbolNumber(String(result))
+                    expression.symbols.remove(at: i-1) // remove the left
+                    i -= 1 // move to stay on operator
+                    expression.symbols[i] = num // change operator to result
+                }else{
+                    throw "Number Invalid: \(left.number)"
+                }
+            }else{
+                throw "Operator \"\(op.op)\" lacking numbers"
+            }
+        }else{
+            throw "Operator \"\(op.op)\" at edge"
         }
         return i
     }
@@ -117,6 +145,17 @@ class Evaluator {
         while i < expression.symbols.count {
             if let exp = expression.symbols[i] as? Expression {
                 try expression.symbols[i] = evaluateExpression(expression: exp)
+            }
+            i += 1
+        }
+        
+        // Evaluate !
+        i = 0
+        while i < expression.symbols.count {
+            if let op = expression.symbols[i] as? SymbolOperator {
+                if op.op == "!" {
+                    try i = evaluateRightOperatorHere(op: op, expression: expression, initalI: i)
+                }
             }
             i += 1
         }
@@ -226,6 +265,8 @@ class Evaluator {
                 return "\(log2(num))"
             case "ln":
                 return "\(log(num))"
+            case "gamma":
+                return "\(tgamma(num))"
             default:
                 return "Unknown function: \(name)"
             }
@@ -269,7 +310,7 @@ class Evaluator {
                     fallthrough
                 case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".":
                     try addNumber(status)
-                case "+", "*", "/", "^", "%":
+                case "+", "*", "/", "^", "%", "!":
                     try addOperator(status)
                 case "(":
                     let newExp = Expression()
@@ -348,7 +389,7 @@ class Evaluator {
         
         let char = status.char()
         switch(char) {
-            case "+", "-", "*", "/", "%", "^":
+            case "+", "-", "*", "/", "%", "^", "!":
                 status.exp.addOperator(char)
             default:
                 throw "Unknown Operator: \"\(char)\""
