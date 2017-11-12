@@ -95,7 +95,11 @@ class Evaluator {
                     expression.symbols.remove(at: i) // remove operator, now on right
                     expression.symbols[i] = num // change right to result
                 }else{
-                    throw "Number Invalid: \(left.number)"
+                    if Double(right.number) == nil{
+                        throw "Number Invalid: \(right.number)"
+                    }else if Double(left.number) == nil{
+                        throw "Number Invalid: \(left.number)"
+                    }
                 }
             }else{
                 throw "Operator \"\(op.op)\" lacking numbers"
@@ -358,10 +362,11 @@ class Evaluator {
             switch(char) {
                 case "-":
                     if number.isEmpty {
-                        number.append(char)
-                    } else {
-                        building = false
+                        status.exp.addNumber("-1");
+                        status.exp.addOperator("*");
+                        status.i += 1
                     }
+                    building = false
                 case ".":
                     if number.contains(".") {
                         throw "Unexpected \".\""
@@ -382,7 +387,9 @@ class Evaluator {
             throw "Number Incomplete"
         }
         
-        status.exp.addNumber(number)
+        if !number.isEmpty {
+            status.exp.addNumber(number)
+        }
     }
     
     static func addOperator(_ status: ParseStatus) throws {
