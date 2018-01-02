@@ -362,11 +362,17 @@ class Evaluator {
             switch(char) {
                 case "-":
                     if number.isEmpty {
-                        status.exp.addNumber("-1");
-                        status.exp.addOperator("*");
-                        status.i += 1
+                        if status.i == 0 {
+                            status.exp.addNumber("-1");
+                            status.exp.addOperator("*");
+                            status.i += 1
+                            building = false
+                        } else {
+                            number.append(char);
+                        }
+                    }else{
+                        building = false
                     }
-                    building = false
                 case ".":
                     if number.contains(".") {
                         throw "Unexpected \".\""
