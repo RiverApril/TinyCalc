@@ -424,6 +424,7 @@ class Evaluator {
                 status.i += 1
             } else if char == "(" {
                 isFunc = true
+                status.i += 1
                 break
             } else {
                 isFunc = false
