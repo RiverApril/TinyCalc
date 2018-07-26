@@ -301,7 +301,7 @@ class Evaluator {
         
         let status = ParseStatus(str: filteredInput)
         
-        while (status.i < status.str.characters.count) {
+        while (status.i < status.str.count) {
             let char = status.char()
             switch(char){
                 case "-":
@@ -357,7 +357,7 @@ class Evaluator {
         
         var building = true
         
-        while (status.i < status.str.characters.count && building) {
+        while (status.i < status.str.count && building) {
             let char = status.char()
             switch(char) {
                 case "-":
@@ -417,7 +417,7 @@ class Evaluator {
         
         var isFunc = false
         
-        while (status.i < status.str.characters.count) {
+        while (status.i < status.str.count) {
             let char = status.char()
             if char >= "a" && char <= "z" {
                 name.append(char)
@@ -440,7 +440,7 @@ class Evaluator {
             var num = 0.0
             switch(name) {
                 case "pi":
-                    num = M_PI
+                    num = Double.pi
                 case "e":
                     num = M_E
                 default:
@@ -452,11 +452,16 @@ class Evaluator {
     }
     
     static func evaluate(input: String) throws -> String{
-        let s = try evaluateExpression(expression: parseExpression(input: input)).number;
+        var s = try evaluateExpression(expression: parseExpression(input: input)).number;
         if(s.hasSuffix(".0")){
-            return String(s.characters.dropLast(2));
+            s.removeLast(2)
+            return s
         }
-        return s;
+        if(s.hasSuffix(".")){
+            s.removeLast()
+            return s
+        }
+        return s
     }
 
 }
