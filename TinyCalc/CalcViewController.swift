@@ -81,13 +81,19 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
         }
         do{
             try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
+            
+            if UserDefaults.standard.bool(forKey: "copyOnEnter") {
+                copyAnswer(nil)
+            }
+            
         }catch let e as String{
             answerField.stringValue = e
         }catch{
             answerField.stringValue = "Unknown Error"
         }
-        if UserDefaults.standard.bool(forKey: "copyOnEnter") {
-            copyAnswer(nil)
-        }
     }
+    
+    
+    
+    
 }
