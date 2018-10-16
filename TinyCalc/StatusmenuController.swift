@@ -7,6 +7,8 @@
 //
 
 import Cocoa
+import Carbon
+
 
 class StatusmenuController: NSObject {
     
@@ -14,7 +16,38 @@ class StatusmenuController: NSObject {
     
     let popover = NSPopover()
     
+    
+    let globalKeycode = UInt16(kVK_Space)
+    let globalKeymask: NSEventModifierFlags = NSEventModifierFlags(rawValue: NSEventModifierFlags.command.rawValue)
+    
+    func globalHotkeyHandler(event: NSEvent!) {
+        _ = localHotkeyHandler(event: event)
+    }
+    
+    func localHotkeyHandler(event: NSEvent!) -> NSEvent? {
+        if event.keyCode == self.globalKeycode && event.modifierFlags.rawValue & self.globalKeymask.rawValue == self.globalKeymask.rawValue {
+            togglePopover(sender: self)
+            return nil
+        }
+        return event
+    }
+    
+    
     override func awakeFromNib() {
+        
+        // Setup Global/Local Hotkey:
+        if(AXIsProcessTrusted()){
+            
+            let opts = NSDictionary(object: kCFBooleanTrue, forKey: kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString) as CFDictionary
+            
+            guard AXIsProcessTrustedWithOptions(opts) == true else { return }
+            
+            NSEvent.addGlobalMonitorForEvents(matching: .keyDown, handler: self.globalHotkeyHandler)
+            NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: self.localHotkeyHandler)
+            
+        }
+        //
+        
         
         let icon = NSImage(named: "statusIcon")
         icon?.isTemplate = true
