@@ -31,19 +31,19 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
             UserDefaults.standard.set(false, forKey: "copyOnEnter")
         }else{
             if UserDefaults.standard.bool(forKey: "copyOnEnter") {
-                CopyOnReturn.state = NSOnState
+                CopyOnReturn.state = NSControl.StateValue.on
             }else{
-                CopyOnReturn.state = NSOffState
+                CopyOnReturn.state = NSControl.StateValue.off
             }
         }
     
     }
     
     @IBAction func quitOption(_ sender: NSMenuItem) {
-        NSApplication.shared().terminate(self)
+        NSApplication.shared.terminate(self)
     }
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         do{
             try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)
             //answerField.textColor = NSColor.controlTextColor
@@ -60,24 +60,24 @@ class CalcViewController: NSViewController, NSTextFieldDelegate {
     
     @IBAction func copyOnReturnToggle(_ sender: NSMenuItem) {
         
-        if CopyOnReturn.state == NSOnState {
-            CopyOnReturn.state = NSOffState
+        if CopyOnReturn.state == NSControl.StateValue.on {
+            CopyOnReturn.state = NSControl.StateValue.off
             UserDefaults.standard.set(false, forKey: "copyOnEnter")
-        } else if CopyOnReturn.state == NSOffState {
-            CopyOnReturn.state = NSOnState
+        } else if CopyOnReturn.state == NSControl.StateValue.off {
+            CopyOnReturn.state = NSControl.StateValue.on
             UserDefaults.standard.set(true, forKey: "copyOnEnter")
         }
     }
     
     @IBAction func copyAnswer(_ sender: NSMenuItem?) {
-        let pasteboard = NSPasteboard.general();
-        pasteboard.declareTypes([NSPasteboardTypeString], owner: nil)
-        pasteboard.setString(answerField.stringValue, forType: NSPasteboardTypeString)
+        let pasteboard = NSPasteboard.general;
+        pasteboard.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
+        pasteboard.setString(answerField.stringValue, forType: NSPasteboard.PasteboardType.string)
     }
     
     @IBAction func textChanged(_ sender: NSTextField) {
         if inputField.stringValue == "quit" {
-            NSApplication.shared().terminate(self)
+            NSApplication.shared.terminate(self)
         }
         do{
             try answerField.stringValue = Evaluator.evaluate(input: inputField.stringValue)

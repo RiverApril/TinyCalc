@@ -12,13 +12,13 @@ import Carbon
 
 class StatusmenuController: NSObject {
     
-    let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     
     let popover = NSPopover()
     
     
     let globalKeycode = UInt16(kVK_Space)
-    let globalKeymask: NSEventModifierFlags = NSEventModifierFlags(rawValue: NSEventModifierFlags.command.rawValue)
+    let globalKeymask: NSEvent.ModifierFlags = NSEvent.ModifierFlags(rawValue: NSEvent.ModifierFlags.command.rawValue)
     
     func globalHotkeyHandler(event: NSEvent!) {
         _ = localHotkeyHandler(event: event)
@@ -38,7 +38,7 @@ class StatusmenuController: NSObject {
         // Setup Global/Local Hotkey:
         if(AXIsProcessTrusted()){
             
-            let opts = NSDictionary(object: kCFBooleanTrue, forKey: kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString) as CFDictionary
+            let opts = NSDictionary(object: kCFBooleanTrue!, forKey: kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString) as CFDictionary
             
             guard AXIsProcessTrustedWithOptions(opts) == true else { return }
             
@@ -61,18 +61,18 @@ class StatusmenuController: NSObject {
         
         let controller = CalcViewController(nibName: "CalcViewController", bundle: nil)
         
-        controller?.popover = popover
+        controller.popover = popover
         
         popover.contentViewController = controller
         
     }
     
-    func togglePopover(sender: AnyObject){
+    @objc func togglePopover(sender: AnyObject){
         if(popover.isShown){
             popover.performClose(sender)
         }else{
             if let button = statusItem.button {
-                NSRunningApplication.current().activate(options: NSApplicationActivationOptions.activateIgnoringOtherApps)
+                NSRunningApplication.current.activate(options: NSApplication.ActivationOptions.activateIgnoringOtherApps)
                 popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
             }
         }

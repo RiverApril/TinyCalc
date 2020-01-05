@@ -11,8 +11,8 @@ import Cocoa
 class NSApplicationFix: NSApplication {
 
     override func sendEvent(_ event: NSEvent) {
-        if event.type == NSEventType.keyDown {
-            if (event.modifierFlags.rawValue & NSDeviceIndependentModifierFlagsMask.rawValue) == NSEventModifierFlags.command.rawValue{
+        if event.type == NSEvent.EventType.keyDown {
+            if (event.modifierFlags.contains(NSEvent.ModifierFlags.command) ){
                 switch event.charactersIgnoringModifiers! {
                 case "x":
                     if sendAction(#selector(NSText.cut(_:)), to: nil, from: self){ return }
@@ -28,7 +28,7 @@ class NSApplicationFix: NSApplication {
                     break
                 }
                     
-            }else if (event.modifierFlags.rawValue & NSDeviceIndependentModifierFlagsMask.rawValue) == (NSEventModifierFlags.command.rawValue | NSEventModifierFlags.shift.rawValue){
+            }else if (event.modifierFlags.contains(NSEvent.ModifierFlags.command) && event.modifierFlags.contains(NSEvent.ModifierFlags.shift)){
                 switch event.charactersIgnoringModifiers! {
                 case "z":
                     if sendAction(Selector(("redo:")), to: nil, from: self){ return }
